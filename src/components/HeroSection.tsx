@@ -1,7 +1,25 @@
-import { Star, Moon, Sun } from "lucide-react";
+import { Star, Moon, Sun, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const HeroSection = () => {
+  const scrollToZodiac = () => {
+    const element = document.getElementById("zodiac");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const scrollToCommunity = () => {
+    const element = document.getElementById("community");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      toast.success("Welcome to our cosmic community!", {
+        description: "Connect with fellow souls on their celestial journey.",
+      });
+    }
+  };
+
   return (
     <section className="relative min-h-[70vh] flex items-center justify-center pt-16 overflow-hidden">
       {/* Star field background */}
@@ -39,10 +57,19 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-gold">
+            <Button 
+              size="lg" 
+              className="bg-primary text-primary-foreground hover:bg-primary/90 glow-gold"
+              onClick={scrollToZodiac}
+            >
               Explore Zodiac Energies
             </Button>
-            <Button size="lg" variant="outline" className="border-border hover:bg-muted">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-border hover:bg-muted"
+              onClick={scrollToCommunity}
+            >
               Join the Community
             </Button>
           </div>
@@ -51,8 +78,5 @@ const HeroSection = () => {
     </section>
   );
 };
-
-// Import Sparkles for the badge
-import { Sparkles } from "lucide-react";
 
 export default HeroSection;
