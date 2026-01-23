@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ZodiacSign } from "@/data/zodiacData";
+import { ZodiacSign, getDailyEnergy } from "@/data/zodiacData";
 import { ChevronDown, Flame, Mountain, Wind, Droplets } from "lucide-react";
 
 interface ZodiacCardProps {
@@ -17,6 +17,7 @@ const elementIcons = {
 const ZodiacCard = ({ sign, index }: ZodiacCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const ElementIcon = elementIcons[sign.element];
+  const dailyEnergy = getDailyEnergy(sign.name);
 
   return (
     <div
@@ -44,7 +45,7 @@ const ZodiacCard = ({ sign, index }: ZodiacCardProps) => {
 
         {/* Energy Description */}
         <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-          {sign.energy}
+          {dailyEnergy}
         </p>
 
         {/* Expand Button */}
