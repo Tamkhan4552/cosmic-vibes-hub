@@ -3,20 +3,26 @@ import ForumPost from "./ForumPost";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageSquarePlus, Search, TrendingUp, Clock, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const CommunitySection = () => {
   const [activeFilter, setActiveFilter] = useState<'trending' | 'recent'>('trending');
   const [searchQuery, setSearchQuery] = useState('');
   const [displayedPosts, setDisplayedPosts] = useState(4);
+  const [selectedZodiac, setSelectedZodiac] = useState<string | null>(null);
 
   const filteredPosts = forumPosts
-    .filter(post => 
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
+    .filter(post => {
+      const matchesSearch =
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      const matchesZodiac = selectedZodiac ? post.zodiacSign.toLowerCase() === selectedZodiac.toLowerCase() || post.tags.some(t => t.toLowerCase() === selectedZodiac.toLowerCase()) : true;
+
+      return matchesSearch && matchesZodiac;
+    })
     .sort((a, b) => {
       if (activeFilter === 'trending') {
         return b.likes - a.likes;
@@ -54,6 +60,20 @@ const CommunitySection = () => {
     }
   };
 
+  // Listen for zodiac selection events from ZodiacCard
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.sign) {
+        setSelectedZodiac(detail.sign);
+        setDisplayedPosts(8);
+        toast.info(`Showing ${detail.sign} community`);
+      }
+    };
+    window.addEventListener('selectZodiac', handler as EventListener);
+    return () => window.removeEventListener('selectZodiac', handler as EventListener);
+  }, []);
+
   return (
     <section id="community" className="py-20 relative">
       <div className="container mx-auto px-4">
@@ -71,6 +91,24 @@ const CommunitySection = () => {
             and discover how others are using Cosmbreath products in their daily rituals.
           </p>
         </div>
+
+        {/* Selected Zodiac Filter */}
+        {selectedZodiac && (
+          <div className="flex items-center justify-center mb-6">
+            <div className="inline-flex items-center gap-3 bg-muted/60 border border-border px-4 py-2 rounded-full">
+              <span className="text-sm text-muted-foreground">Showing posts for</span>
+              <strong className="font-display text-foreground ml-1">{selectedZodiac}</strong>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-4"
+                onClick={() => { setSelectedZodiac(null); setDisplayedPosts(4); toast.success('Showing all discussions'); window.scrollTo({ top: document.getElementById('community')?.offsetTop || 0, behavior: 'smooth' }); }}
+              >
+                Show All
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Forum Controls */}
         <div className="flex flex-col md:flex-row gap-4 mb-8 items-start md:items-center justify-between">

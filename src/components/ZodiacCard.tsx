@@ -19,11 +19,20 @@ const ZodiacCard = ({ sign, index }: ZodiacCardProps) => {
   const ElementIcon = elementIcons[sign.element];
   const dailyEnergy = getDailyEnergy(sign.name);
 
+  const handleOpenCommunity = () => {
+    window.dispatchEvent(new CustomEvent('selectZodiac', { detail: { sign: sign.name } }));
+    const el = document.getElementById('community');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div
       className="card-cosmic rounded-xl overflow-hidden border border-border/50 hover:border-primary/30 transition-all duration-300 group cursor-pointer animate-fade-in"
       style={{ animationDelay: `${index * 100}ms` }}
-      onClick={() => setIsExpanded(!isExpanded)}
+      onClick={handleOpenCommunity}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter') handleOpenCommunity(); }}
     >
       <div className="p-6">
         {/* Header */}
@@ -48,8 +57,12 @@ const ZodiacCard = ({ sign, index }: ZodiacCardProps) => {
           {dailyEnergy}
         </p>
 
-        {/* Expand Button */}
-        <button className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all">
+        {/* Expand Button (stop propagation so clicking it doesn't open community) */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
+          className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all"
+          aria-expanded={isExpanded}
+        >
           <span>Daily Guidance</span>
           <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
         </button>

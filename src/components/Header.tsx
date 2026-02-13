@@ -26,15 +26,16 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          <a 
+            href="https://www.cosmbreath.com/"
             className="flex items-center gap-2 cursor-pointer"
           >
-            <Sparkles className="w-6 h-6 text-primary" />
-            <span className="font-display text-xl tracking-wider text-gradient-gold">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="font-display text-lg tracking-wider text-gradient-gold">
               COSMBREATH
             </span>
-          </button>
+          </a>
+
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">

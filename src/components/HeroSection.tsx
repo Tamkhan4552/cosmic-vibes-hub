@@ -30,15 +30,16 @@ const HeroSection = () => {
       
       {/* Floating Navigation */}
       <nav className="relative z-20 flex items-center justify-between px-6 md:px-12 py-6">
-        <button 
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <Sparkles className="w-6 h-6 text-primary" />
-          <span className="font-display text-xl tracking-wider text-gradient-gold">
-            COSMBREATH
-          </span>
-        </button>
+        <a 
+            href="https://www.cosmbreath.com/"
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="font-display text-lg tracking-wider text-gradient-gold">
+              COSMBREATH
+            </span>
+          </a>
+
 
         <div className="flex items-center gap-2 md:gap-6">
           <button 

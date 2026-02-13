@@ -30,15 +30,15 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          <a 
+            href="https://www.cosmbreath.com/"
             className="flex items-center gap-2 cursor-pointer"
           >
             <Sparkles className="w-5 h-5 text-primary" />
             <span className="font-display text-lg tracking-wider text-gradient-gold">
               COSMBREATH
             </span>
-          </button>
+          </a>
 
           {/* Links */}
           <nav className="flex items-center gap-6 text-sm text-muted-foreground">
