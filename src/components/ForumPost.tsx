@@ -2,30 +2,71 @@ import { ForumPost as ForumPostType } from "@/data/forumData";
 import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/AuthContext";
 
 interface ForumPostProps {
   post: ForumPostType;
   index: number;
+  onLikeUpdate?: (postId: string, liked: boolean) => void;
 }
 
-const ForumPost = ({ post, index }: ForumPostProps) => {
-  const [liked, setLiked] = useState(false);
+const ForumPost = ({ post, index, onLikeUpdate }: ForumPostProps) => {
+  const { user, openLoginModal } = useAuth();
+  const [liked, setLiked] = useState(() => {
+    if (!user) return false;
+    const likedPosts = JSON.parse(localStorage.getItem(`likedPosts_${user.id}`) || '[]');
+    return likedPosts.includes(post.id);
+  });
   const [likeCount, setLikeCount] = useState(post.likes);
   const [saved, setSaved] = useState(false);
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setLiked(!liked);
-    setLikeCount(prev => liked ? prev - 1 : prev + 1);
-    toast.success(liked ? "Removed from likes" : "Added to likes", {
-      description: liked ? "Post unliked" : `You liked ${post.author}'s post`,
+    if (!user) {
+      toast.error("Please login to like posts", {
+        description: "Join the community to show your appreciation!",
+        action: {
+          label: "Login",
+          onClick: () => openLoginModal(),
+        },
+      });
+      return;
+    }
+    const newLiked = !liked;
+    setLiked(newLiked);
+    setLikeCount(prev => newLiked ? prev + 1 : prev - 1);
+    
+    // Update localStorage
+    const likedPosts = JSON.parse(localStorage.getItem(`likedPosts_${user.id}`) || '[]');
+    if (newLiked) {
+      likedPosts.push(post.id);
+    } else {
+      const index = likedPosts.indexOf(post.id);
+      if (index > -1) likedPosts.splice(index, 1);
+    }
+    localStorage.setItem(`likedPosts_${user.id}`, JSON.stringify(likedPosts));
+    
+    onLikeUpdate?.(post.id, newLiked);
+    
+    toast.success(newLiked ? "Added to likes" : "Removed from likes", {
+      description: newLiked ? `You liked ${post.author}'s post` : "Post unliked",
     });
   };
 
   const handleReply = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!user) {
+      toast.error("Please login to comment", {
+        description: "Join the conversation by logging in!",
+        action: {
+          label: "Login",
+          onClick: () => openLoginModal(),
+        },
+      });
+      return;
+    }
     toast.info("Reply to this post", {
-      description: "Sign up to join the conversation!",
+      description: "Comment feature coming soon!",
       action: {
         label: "Coming Soon",
         onClick: () => toast.success("Feature launching soon!"),

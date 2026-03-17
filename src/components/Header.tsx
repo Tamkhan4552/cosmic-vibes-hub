@@ -2,9 +2,11 @@ import { Sparkles, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, openLoginModal, logout } = useAuth();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -60,6 +62,18 @@ const Header = () => {
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleJoinDiscussion}>
               Join Discussion
             </Button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground hidden md:inline">Hi, {user.name}</span>
+                <Button size="sm" variant="outline" onClick={logout}>
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button size="sm" variant="outline" onClick={openLoginModal}>
+                Login
+              </Button>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -101,6 +115,15 @@ const Header = () => {
               <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 w-fit" onClick={handleJoinDiscussion}>
                 Join Discussion
               </Button>
+              {user ? (
+                <Button size="sm" variant="outline" onClick={logout} className="w-fit">
+                  Logout
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" onClick={openLoginModal} className="w-fit">
+                  Login
+                </Button>
+              )}
             </div>
           </nav>
         )}
