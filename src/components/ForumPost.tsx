@@ -1,8 +1,9 @@
-import { ForumPost as ForumPostType } from "@/data/forumData";
-import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react";
+import { ForumPost as ForumPostType, Comment } from "@/data/forumData";
+import { Heart, MessageCircle, Share2, Bookmark, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/AuthContext";
+import CommentsSection from "./CommentsSection";
 
 interface ForumPostProps {
   post: ForumPostType;
@@ -19,6 +20,8 @@ const ForumPost = ({ post, index, onLikeUpdate }: ForumPostProps) => {
   });
   const [likeCount, setLikeCount] = useState(post.likes);
   const [saved, setSaved] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<Comment[]>(post.comments || []);
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -65,13 +68,7 @@ const ForumPost = ({ post, index, onLikeUpdate }: ForumPostProps) => {
       });
       return;
     }
-    toast.info("Reply to this post", {
-      description: "Comment feature coming soon!",
-      action: {
-        label: "Coming Soon",
-        onClick: () => toast.success("Feature launching soon!"),
-      },
-    });
+    setShowComments(!showComments);
   };
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -111,6 +108,10 @@ const ForumPost = ({ post, index, onLikeUpdate }: ForumPostProps) => {
     toast.success(`Browsing #${tag}`, {
       description: `Showing posts tagged with ${tag}`,
     });
+  };
+
+  const handleAddComment = (postId: string, comment: Comment) => {
+    setComments([...comments, comment]);
   };
 
   return (
@@ -175,8 +176,8 @@ const ForumPost = ({ post, index, onLikeUpdate }: ForumPostProps) => {
           onClick={handleReply}
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          <MessageCircle className="w-4 h-4" />
-          <span>{post.replies} replies</span>
+          {showComments ? <ChevronUp className="w-4 h-4" /> : <MessageCircle className="w-4 h-4" />}
+          <span>{comments.length + post.replies} comments</span>
         </button>
         <button 
           onClick={handleShare}
@@ -186,6 +187,15 @@ const ForumPost = ({ post, index, onLikeUpdate }: ForumPostProps) => {
           <span className="hidden sm:inline">Share</span>
         </button>
       </div>
+
+      {/* Comments Section */}
+      {showComments && (
+        <CommentsSection 
+          postId={post.id} 
+          comments={comments} 
+          onAddComment={handleAddComment}
+        />
+      )}
     </article>
   );
 };

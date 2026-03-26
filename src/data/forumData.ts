@@ -1,3 +1,13 @@
+export interface Comment {
+  id: string;
+  author: string;
+  avatar: string;
+  zodiacSign: string;
+  content: string;
+  timestamp: string;
+  likes: number;
+}
+
 export interface ForumPost {
   id: string;
   author: string;
@@ -9,6 +19,7 @@ export interface ForumPost {
   replies: number;
   timeAgo: string;
   tags: string[];
+  comments?: Comment[];
 }
 
 export const forumPosts: ForumPost[] = [
